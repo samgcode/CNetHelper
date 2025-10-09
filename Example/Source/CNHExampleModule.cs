@@ -43,7 +43,7 @@ public class CNHExampleModule : EverestModule
 
     public override void Load()
     {
-        Logger.Log(LogLevel.Info, "CNHExampleTest", "Loaded CNHExampleTestModule");
+        Logger.Log(LogLevel.Info, "CNHExample", "Loaded CNHExampleModule");
 
         CNetHelperModule.RegisterType<Death>(OnReceiveDeath);
         CNetHelperModule.OnError += OnError;
@@ -69,7 +69,7 @@ public class CNHExampleModule : EverestModule
 
     public static void OnError(CNetHelperError error)
     {
-        Logger.Log(LogLevel.Error, "CNHExampleTest", $"Error occured in {error.location}: {error.message}");
+        Logger.Log(LogLevel.Error, "CNHExample", $"Error occured in {error.location}: {error.message}");
     }
 
     public static void OnLoadLevel(On.Celeste.LevelLoader.orig_StartLevel orig, LevelLoader self)
@@ -89,10 +89,10 @@ public class CNHExampleModule : EverestModule
 
     public static PlayerDeadBody OnPlayerDie(Func<Player, Vector2, bool, bool, PlayerDeadBody> orig, Player self, Vector2 direction, bool ifInvincible, bool registerStats)
     {
-        Logger.Log(LogLevel.Info, "CNHExampleTest", $"Player died in {map}, {room}");
+        Logger.Log(LogLevel.Info, "CNHExample", $"Player died in {map}, {room}");
         if (propagate)
         {
-            Logger.Log(LogLevel.Info, "CNHExampleTest", $"Player died in {map}, {room}");
+            Logger.Log(LogLevel.Info, "CNHExample", $"Player died in {map}, {room}");
             CNetHelperModule.Send(new Death(map, room), true);
         }
         propagate = true;
@@ -104,7 +104,7 @@ public class CNHExampleModule : EverestModule
 
     private static void OnReceiveDeath(DataPlayerInfo playerInfo, Death update)
     {
-        Logger.Log(LogLevel.Info, "CNHExampleTest", $"Received update from {playerInfo.FullName}: {update.map}, {update.room}");
+        Logger.Log(LogLevel.Info, "CNHExample", $"Received update from {playerInfo.FullName}: {update.map}, {update.room}");
 
         propagate = false;
         Player player = Engine.Scene.Tracker.GetEntity<Player>();
