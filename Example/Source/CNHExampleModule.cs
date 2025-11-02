@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using Celeste.Mod.CelesteNet.DataTypes;
 using Celeste.Mod.CNetHelper;
 using Celeste.Mod.CNetHelper.Data;
 using Celeste.Mod.CNHExample.Data;
@@ -69,7 +68,15 @@ public class CNHExampleModule : EverestModule
 
     public static void OnError(CNetHelperError error)
     {
-        Logger.Log(LogLevel.Error, "CNHExample", $"Error occured in {error.location}: {error.message}");
+        if (error.errorType == ErrorType.NotConnected)
+        {
+            Logger.Log(LogLevel.Error, "CNHExample", $"Celeste Net not connected!");
+
+        }
+        else
+        {
+            Logger.Log(LogLevel.Error, "CNHExample", $"Error occured in {error.location}: {error.message}");
+        }
     }
 
     public static void OnLoadLevel(On.Celeste.LevelLoader.orig_StartLevel orig, LevelLoader self)
@@ -102,7 +109,7 @@ public class CNHExampleModule : EverestModule
     }
 
 
-    private static void OnReceiveDeath(DataPlayerInfo playerInfo, Death update)
+    private static void OnReceiveDeath(PlayerData playerInfo, Death update)
     {
         Logger.Log(LogLevel.Info, "CNHExample", $"Received update from {playerInfo.FullName}: {update.map}, {update.room}");
 

@@ -9,6 +9,10 @@ The basic things required to use this API are the following:
 The first thing is to add an error handler:
 
 ```CS
+using Celeste.Mod.CNetHelper;
+using Celeste.Mod.CNetHelper.Data;
+using Celeste.Mod.CNHExample.Data;
+
 public override void Load() {
   CNetHelperModule.OnError += OnError;
 }
@@ -18,7 +22,12 @@ public override void Unload() {
 }
 
 public static void OnError(CNetHelperError error) {
-  Logger.Log(LogLevel.Error, "CNHExample", $"Error occured in {error.location}: {error.message}");
+  if (error.errorType == ErrorType.NotConnected) {
+    Logger.Log(LogLevel.Error, "CNHExample", $"Celeste Net not connected!");
+
+  } else {
+    Logger.Log(LogLevel.Error, "CNHExample", $"Error occured in {error.location}: {error.message}");
+  }
 }
 ```
 
@@ -28,11 +37,13 @@ Then to send messages, create a class that is JSON serializable to represent the
 public class Message {
   public string text { get; set; }
 
-  public Message(string text_to_send) {
-    this.text = text_to_send;
+  public Message(string text) {
+    this.text = text;
   }
 }
 ```
+- due to how the json serializer works, only properties and not fields work, also the constructor parameters have to have the same name as the properties
+- why is it like this? idk ! but I plan to switch to a different serializer that actually works at some point (System.Text.Json SUCKS)
 
 Then create and register the message received handler:
 
@@ -43,7 +54,7 @@ public override void Load()
   CNetHelperModule.RegisterType<Message>(OnReceiveMessage);
 }
 
-private static void OnReceiveMessage(DataPlayerInfo playerInfo, Message msg) {
+private static void OnReceiveMessage(PlayerData playerInfo, Message msg) {
   Logger.Log(LogLevel.Info, "CNHExample", $"Received a message from {playerInfo.FullName}: {msg.text}");
 }
 ```

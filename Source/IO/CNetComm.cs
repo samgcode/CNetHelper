@@ -69,14 +69,6 @@ namespace Celeste.Mod.CNetHelper.IO
       }
     }
 
-    public bool CanSendMessages
-    {
-      get
-      {
-        return IsConnected;
-      }
-    }
-
     private ConcurrentQueue<Action> updateQueue = new ConcurrentQueue<Action>();
 
     #endregion
@@ -133,7 +125,7 @@ namespace Celeste.Mod.CNetHelper.IO
 
     #endregion
 
-    internal static void RegisterType<T>(Action<DataPlayerInfo, T> handler)
+    internal static void RegisterType<T>(Action<PlayerData, T> handler)
     {
       string type_key = typeof(T).ToString();
       if (registeredTypes.ContainsKey(type_key))
@@ -152,8 +144,9 @@ namespace Celeste.Mod.CNetHelper.IO
 
     public void Send<T>(T data, bool sendToSelf)
     {
-      if (!CanSendMessages)
+      if (!IsConnected)
       {
+        OnError?.Invoke(new CNetHelperError("Send", ErrorType.NotConnected, $"Failed to send message, CNet not connected", null));
         return;
       }
       try
@@ -161,7 +154,7 @@ namespace Celeste.Mod.CNetHelper.IO
         string type_key = typeof(T).ToString();
         if (!registeredTypes.ContainsKey(type_key) || !registeredHandlers.ContainsKey(data.GetType()))
         {
-          OnError?.Invoke(new CNetHelperError("Send", $"Type {type_key} not registered", null));
+          OnError?.Invoke(new CNetHelperError("Send", ErrorType.Unregistered, $"Type {type_key} not registered", null));
           return;
         }
 
@@ -196,7 +189,7 @@ namespace Celeste.Mod.CNetHelper.IO
       Type type = registeredTypes[data.typeKey];
       if (type == null)
       {
-        OnError?.Invoke(new CNetHelperError("Handle", $"Type {data.typeKey} not registered", null));
+        OnError?.Invoke(new CNetHelperError("Handle", ErrorType.Unregistered, $"Type {data.typeKey} not registered", null));
         return;
       }
 
@@ -205,15 +198,14 @@ namespace Celeste.Mod.CNetHelper.IO
       {
         obj = JsonSerializer.Deserialize(data.json, type);
       }
-      catch
+      catch (Exception e)
       {
-        OnError?.Invoke(new CNetHelperError("Handle", $"Failed to deserialize {data.typeKey}", null));
+        OnError?.Invoke(new CNetHelperError("Handle", ErrorType.FailedToDeserialize, $"Failed to deserialize {data.typeKey}", e));
         return;
       }
 
-
       Delegate handler = registeredHandlers[type];
-      updateQueue.Enqueue(() => handler.DynamicInvoke(data.player, Convert.ChangeType(obj, type)));
+      updateQueue.Enqueue(() => handler.DynamicInvoke(new PlayerData(data.player), Convert.ChangeType(obj, type)));
     }
 
     #endregion

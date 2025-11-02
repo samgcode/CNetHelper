@@ -1,5 +1,4 @@
 ﻿using System;
-using Celeste.Mod.CelesteNet.DataTypes;
 using Celeste.Mod.CNetHelper.Data;
 using Celeste.Mod.CNetHelper.IO;
 
@@ -52,7 +51,7 @@ public class CNetHelperModule : EverestModule
         Comm.Send(data, sendToSelf);
     }
 
-    public static void RegisterType<T>(Action<DataPlayerInfo, T> handler)
+    public static void RegisterType<T>(Action<PlayerData, T> handler)
     {
         CNetComm.RegisterType(handler);
     }

@@ -1,6 +1,5 @@
 using Celeste.Mod.CelesteNet;
 using Celeste.Mod.CelesteNet.DataTypes;
-using Celeste.Mod.CNetHelper.IO;
 
 namespace Celeste.Mod.CNetHelper.Data
 {
@@ -30,9 +29,9 @@ namespace Celeste.Mod.CNetHelper.Data
 
 
     public override MetaType[] GenerateMeta(DataContext ctx)
-      => new MetaType[] {
+      => [
         new MetaPlayerPrivateState(player),
-      };
+      ];
 
     public override void FixupMeta(DataContext ctx)
     {
@@ -41,8 +40,8 @@ namespace Celeste.Mod.CNetHelper.Data
 
     protected override void Read(CelesteNetBinaryReader reader)
     {
-      typeKey = reader.ReadString();
-      json = reader.ReadString();
+      typeKey = reader.ReadNetString();
+      json = reader.ReadNetString();
     }
 
     protected override void Write(CelesteNetBinaryWriter writer)

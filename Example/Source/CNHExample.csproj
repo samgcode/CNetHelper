@@ -17,8 +17,8 @@
     </ItemDefinitionGroup>
 
     <ItemGroup>
-        <PackageReference Include="MonoMod.RuntimeDetour" Version="25.2.3" PrivateAssets="all" ExcludeAssets="runtime" />
-        <PackageReference Include="MonoMod.Patcher" Version="25.0.0-prerelease.2" />
+        <PackageReference Include="MonoMod.RuntimeDetour" Version="25.3.2" PrivateAssets="all" ExcludeAssets="runtime" />
+        <PackageReference Include="MonoMod.Patcher" Version="25.0.0" />
         <PackageReference Include="CelesteAnalyzer" Version="*" />
     </ItemGroup>
 
@@ -31,14 +31,6 @@
     <ItemGroup>
         <Reference Include="CNetHelper">
             <HintPath>..\..\CNetHelper\bin\CnetHelper.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
-        <Reference Include="CelesteNet.Client">
-            <HintPath>.\Ref\CelesteNet.Client.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
-        <Reference Include="CelesteNet.Shared">
-            <HintPath>.\Ref\CelesteNet.Shared.dll</HintPath>
             <Private>False</Private>
         </Reference>
     </ItemGroup>
